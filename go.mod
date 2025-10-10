@@ -3,7 +3,7 @@ module AdminPanelAPI
 go 1.24.3
 
 require (
-	github.com/Hugokoks/kratomclub-go-common v0.0.0-20251007095848-a3eb286d1273
+	github.com/Hugokoks/kratomclub-go-common v0.1.1
 	github.com/gin-gonic/gin v1.11.0
 	github.com/joho/godotenv v1.5.1
 )

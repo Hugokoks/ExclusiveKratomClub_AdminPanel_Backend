@@ -105,8 +105,6 @@ func main(){
         })
 	}
 
-	
-	
 	//Preflight
 	admin.OPTIONS("/*path", func(c *gin.Context) { 
 		c.Status(http.StatusNoContent)
