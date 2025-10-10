@@ -78,7 +78,7 @@ func main(){
 	// ===CORS Creating ===
 	corsConfig := ekc_cors.CORSConfig{
 		Env:        os.Getenv("ENV"), // "production" / "development"
-		DevClient:  ekc_utils.LoadEnvVariable("DEVELOPMENT_CLIENT_URL"),
+		DevClient:  ekc_utils.LoadEnvVariable("DEVELOPMENT_URL"),
 		AdminUI:    ekc_utils.LoadEnvVariable("ADMIN_CLIENT_URL"),
 		// optional:
 		// AllowHeaders: []string{...}, AllowMethods: []string{...}, MaxAge: time.Hour,
