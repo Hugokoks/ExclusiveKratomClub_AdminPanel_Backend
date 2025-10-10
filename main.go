@@ -93,6 +93,20 @@ func main(){
 	admin.Use(adminCORS)
 	admin.Use(ekc_mid.AnonSession())
 	admin.Use(ekc_mid.SessionRateLimitMiddleware(sessLimiter))
+	
+
+	/////Secured routes
+	secured := admin.Group("/")
+	secured.Use(ekc_mid.AuthMiddleware())
+	secured.Use(ekc_mid.AdminRoleMiddleware())
+	{
+        secured.GET("/verify-auth", func(c *gin.Context) {
+            c.JSON(http.StatusOK, gin.H{"valid": true, "message": "Token is valid","status":"error"})
+        })
+	}
+
+	
+	
 	//Preflight
 	admin.OPTIONS("/*path", func(c *gin.Context) { 
 		c.Status(http.StatusNoContent)
