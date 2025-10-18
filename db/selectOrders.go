@@ -6,24 +6,23 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"time"
 
 	ekc_db "github.com/Hugokoks/kratomclub-go-common/db"
 )
 
 // Struktura, která odpovídá tomu, co posíláme na frontend
 type Order struct {
-	ID              string    `json:"id"`
-	CreatedAt       time.Time `json:"createdAt"`
-	FirstName       string    `json:"firstName"`
-	LastName        string    `json:"lastName"`
-	Email           string    `json:"email"`
-	DeliveryAddress string    `json:"deliveryAddress"`
-	PaymentMethod   string    `json:"paymentMethod"`
-	DeliveryMethod  string    `json:"deliveryMethod"`
-	TotalPrice      float64   `json:"totalPrice"`
-	ItemCount       int       `json:"itemCount"`
-	Status          string    `json:"status"`
+	ID              string  `json:"id"`
+	CreatedAt       string  `json:"createdAt"`
+	FirstName       string  `json:"firstName"`
+	LastName        string  `json:"lastName"`
+	Email           string  `json:"email"`
+	DeliveryAddress string  `json:"deliveryAddress"`
+	PaymentMethod   string  `json:"paymentMethod"`
+	DeliveryMethod  string  `json:"deliveryMethod"`
+	TotalPrice      float64 `json:"totalPrice"`
+	ItemCount       int     `json:"itemCount"`
+	Status          string  `json:"status"`
 }
 
 // Funkce pro bezpečné sestavení a spuštění dotazu
@@ -31,12 +30,25 @@ func SelectOrders(ctx context.Context, filters models.OrderFilters) ([]Order, er
 	// Základní dotaz už je bez JOINu
 	query := `
 		SELECT 
-			o.number, o.created_at, o.customer_first_name, o.customer_last_name, o.customer_email, 
+			o.number, 
+			TO_CHAR(o.created_at, 'YYYY-MM-DD HH24:MI:SS') as created_at, 
+			o.customer_first_name, 
+			o.customer_last_name, 
+			o.customer_email, 
 			CASE 
-				WHEN o.delivery_method = 'packeta-home' THEN o.address_street || ', ' || o.address_city
+				WHEN o.delivery_method LIKE '%home%' THEN o.address_street || ', ' || o.address_city
 				ELSE o.pickup_name
 			END as delivery_address,
-			o.payment_method, o.delivery_method, o.total_czk,
+			CASE 
+                WHEN POSITION('-' IN o.payment_method) > 0 THEN SPLIT_PART(o.payment_method, '-', 2)
+                ELSE o.payment_method
+            END as payment_method,
+            CASE 
+                WHEN POSITION('-' IN o.delivery_method) > 0 THEN SPLIT_PART(o.delivery_method, '-', 2)
+                ELSE o.delivery_method
+            END as delivery_method,
+			
+			o.total_czk,
 			(SELECT SUM(oi.quantity) FROM order_items oi WHERE oi.order_id = o.id) as item_count,
 			o.status
 		FROM orders o
