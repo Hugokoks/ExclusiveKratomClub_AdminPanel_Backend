@@ -5,6 +5,7 @@ import (
 	"AdminPanelAPI/db"
 	"AdminPanelAPI/models"
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -31,6 +32,7 @@ func GetOrders(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to fetch orders from database"})
 		return
 	}
+	log.Printf("!!! DATABASE ERROR: %v", err)
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "ok",
