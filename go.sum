@@ -1,5 +1,3 @@
-github.com/Hugokoks/kratomclub-go-common v0.0.0-20251007095848-a3eb286d1273 h1:i1D8RUK+RFvr3WTuQPy7iQB1YSP6zq0Yuz/lOK5wm4I=
-github.com/Hugokoks/kratomclub-go-common v0.0.0-20251007095848-a3eb286d1273/go.mod h1:i8zqRo7urB5JGuLnhYpGiXgxIfPzKg9R9Z0s9Wk6ncQ=
 github.com/Hugokoks/kratomclub-go-common v0.1.1 h1:1KDH3yOeRQACvc+SToLBYt7dMafyop65zYdnPbXJxnw=
 github.com/Hugokoks/kratomclub-go-common v0.1.1/go.mod h1:i8zqRo7urB5JGuLnhYpGiXgxIfPzKg9R9Z0s9Wk6ncQ=
 github.com/bytedance/sonic v1.14.0 h1:/OfKt8HFw0kh2rj8N0F6C/qPGRESq0BbaNZgcNXXzQQ=

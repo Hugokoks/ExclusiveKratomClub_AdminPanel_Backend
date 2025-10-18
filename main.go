@@ -1,6 +1,7 @@
 package main
 
 import (
+	"AdminPanelAPI/routes"
 	"context"
 	"log"
 	"net/http"
@@ -19,8 +20,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-
-func main(){
+func main() {
 
 	isProd := os.Getenv("ENV") == "production"
 
@@ -48,10 +48,8 @@ func main(){
 
 	// === Gin Init ===
 	r := gin.New()
-	r.Use(gin.Logger(),gin.Recovery())
+	r.Use(gin.Logger(), gin.Recovery())
 	r.SetTrustedProxies(nil)
-
-
 
 	// ---- Security hlavičky ----
 	r.Use(func(c *gin.Context) {
@@ -63,7 +61,6 @@ func main(){
 		// c.Header("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload")
 		c.Next()
 	})
-
 
 	// ---- Limit velikosti request body ----
 	r.Use(func(c *gin.Context) {
@@ -77,15 +74,14 @@ func main(){
 
 	// ===CORS Creating ===
 	corsConfig := ekc_cors.CORSConfig{
-		Env:        os.Getenv("ENV"), // "production" / "development"
-		DevClient:  ekc_utils.LoadEnvVariable("DEVELOPMENT_URL"),
-		AdminUI:    ekc_utils.LoadEnvVariable("ADMIN_CLIENT_URL"),
+		Env:       os.Getenv("ENV"), // "production" / "development"
+		DevClient: ekc_utils.LoadEnvVariable("DEVELOPMENT_URL"),
+		AdminUI:   ekc_utils.LoadEnvVariable("ADMIN_CLIENT_URL"),
 		// optional:
 		// AllowHeaders: []string{...}, AllowMethods: []string{...}, MaxAge: time.Hour,
 		LogDecisions: true, // dej true při ladění CORS
 	}
 	adminCORS := ekc_cors.NewAdmin(corsConfig)
-
 
 	// ==================ADMIN API ==================
 
@@ -93,23 +89,24 @@ func main(){
 	admin.Use(adminCORS)
 	admin.Use(ekc_mid.AnonSession())
 	admin.Use(ekc_mid.SessionRateLimitMiddleware(sessLimiter))
-	
 
 	/////Secured routes
 	secured := admin.Group("/")
 	secured.Use(ekc_mid.AuthMiddleware())
 	secured.Use(ekc_mid.AdminRoleMiddleware())
 	{
-        secured.GET("/verify-auth", func(c *gin.Context) {
-            c.JSON(http.StatusOK, gin.H{"valid": true, "message": "Token is valid","status":"error"})
-        })
+		secured.GET("/verify-auth", func(c *gin.Context) {
+			c.JSON(http.StatusOK, gin.H{"valid": true, "message": "Token is valid", "status": "error"})
+		})
+
+		routes.OrdersRoute(secured)
+
 	}
 
 	//Preflight
-	admin.OPTIONS("/*path", func(c *gin.Context) { 
+	admin.OPTIONS("/*path", func(c *gin.Context) {
 		c.Status(http.StatusNoContent)
 	})
-
 
 	ekc_services.ServerStart(r)
 
