@@ -1,38 +1,40 @@
 package handlers
 
 import (
+	"AdminPanelAPI/apperrors"
+	"AdminPanelAPI/db"
+	"AdminPanelAPI/models"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-type OrderFilters struct {
-	ID             string `form:"id"`
-	FirstName      string `form:"firstName"`
-	LastName       string `form:"lastName"`
-	Email          string `form:"email"`
-	Address        string `form:"address"`
-	PaymentMethod  string `form:"paymentMethod"`
-	DeliveryMethod string `form:"deliveryMethod"`
-	Status         string `form:"status"`
-	SortBy         string `form:"sortBy"`
-	SortOrder      string `form:"sortOrder"`
-}
-
 func GetOrders(c *gin.Context) {
 
-	var filters OrderFilters
+	var filters models.OrderFilters
 
 	if err := c.ShouldBindQuery(&filters); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Invalid filter parameters"})
+		return
+	}
 
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid filter parameters"})
+	orders, err := db.SelectOrders(c.Request.Context(), filters)
+
+	if err != nil {
+		if errors.Is(err, apperrors.ErrOrdersNotFound) {
+
+			c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "no orders found"})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to fetch orders from database"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-
 		"status":  "ok",
-		"message": "API TEST",
-		"filters": filters,
+		"message": "orders retrive successfully",
+		"orders":  orders,
 	})
 }
