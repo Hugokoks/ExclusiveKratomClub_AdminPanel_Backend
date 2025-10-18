@@ -1,17 +1,17 @@
 package db
 
 import (
+	"AdminPanelAPI/apperrors"
+	"AdminPanelAPI/models"
 	"context"
 	"fmt"
 	"strings"
 	"time"
 
-	"AdminPanelAPI/apperrors"
-	"AdminPanelAPI/models"
-
 	ekc_db "github.com/Hugokoks/kratomclub-go-common/db"
 )
 
+// Struktura, která odpovídá tomu, co posíláme na frontend
 type Order struct {
 	ID              string    `json:"id"`
 	CreatedAt       time.Time `json:"createdAt"`
@@ -26,32 +26,29 @@ type Order struct {
 	Status          string    `json:"status"`
 }
 
+// Funkce pro bezpečné sestavení a spuštění dotazu
 func SelectOrders(ctx context.Context, filters models.OrderFilters) ([]Order, error) {
-
+	// Základní dotaz už je bez JOINu
 	query := `
 		SELECT 
-			o.number, o_d.created_at, o.customer_first_name, o.customer_last_name, o.customer_email, 
+			o.number, o.created_at, o.customer_first_name, o.customer_last_name, o.customer_email, 
 			CASE 
 				WHEN o.delivery_method = 'packeta-home' THEN o.address_street || ', ' || o.address_city
-				ELSE o_d.pickup_name
+				ELSE o.pickup_name
 			END as delivery_address,
-			o.payment_method, o.delivery_method, o_d.total_czk, 
-			-- Pro každou objednávku (o.id) sečteme hodnoty ze sloupce 'quantity'
+			o.payment_method, o.delivery_method, o.total_czk,
 			(SELECT SUM(oi.quantity) FROM order_items oi WHERE oi.order_id = o.id) as item_count,
 			o.status
 		FROM orders o
-		LEFT JOIN order_details o_d ON o.id = o_d.order_id
 		WHERE 1=1
 	`
-
 	args := []interface{}{}
-
 	argId := 1
-	// --- Dynamicky přidáváme podmínky pro každý filtr, POKUD není prázdný ---
+
+	// --- Dynamické přidávání podmínek pro filtry ---
 	if filters.ID != "" {
-		// ILIKE je jako LIKE, ale nerozlišuje velká/malá písmena
 		query += fmt.Sprintf(" AND o.number ILIKE $%d", argId)
-		args = append(args, "%"+filters.ID+"%") // Hledáme text kdekoliv v řetězci
+		args = append(args, "%"+filters.ID+"%")
 		argId++
 	}
 	if filters.FirstName != "" {
@@ -85,25 +82,23 @@ func SelectOrders(ctx context.Context, filters models.OrderFilters) ([]Order, er
 		argId++
 	}
 
-	// Speciální logika pro adresu - hledáme ve více sloupcích
+	// Speciální logika pro adresu
 	if filters.Address != "" {
-		// Hledáme zadaný text buď v ulici, městě, NEBO v názvu výdejního místa
-		// Závorky jsou důležité pro správné pořadí operací
 		addressPattern := "%" + filters.Address + "%"
-		query += fmt.Sprintf(" AND (o.address_street ILIKE $%d OR o.address_city ILIKE $%d OR o_d.pickup_name ILIKE $%d)", argId, argId+1, argId+2)
+		query += fmt.Sprintf(" AND (o.address_street ILIKE $%d OR o.address_city ILIKE $%d OR o.pickup_name ILIKE $%d)", argId, argId+1, argId+2)
 		args = append(args, addressPattern, addressPattern, addressPattern)
 		argId += 3
 	}
 
 	// --- BEZPEČNÉ PŘIDÁNÍ ŘAZENÍ (ORDER BY) ---
 	allowedSortBy := map[string]string{
-		"date":      "o_d.created_at",
-		"price":     "o_d.total_czk",
-		"itemCount": "item_count",
+		"date":      "o.created_at",
+		"price":     "o.total_czk",
+		"itemCount": "item_count", // Toto funguje díky aliasu
 	}
 	sortByColumn, ok := allowedSortBy[filters.SortBy]
 	if !ok {
-		sortByColumn = "o_d.created_at"
+		sortByColumn = "o.created_at"
 	}
 
 	sortOrder := "DESC"
@@ -111,7 +106,6 @@ func SelectOrders(ctx context.Context, filters models.OrderFilters) ([]Order, er
 		sortOrder = "ASC"
 	}
 	query += fmt.Sprintf(" ORDER BY %s %s", sortByColumn, sortOrder)
-	/// Spustíme finální dotaz
 
 	rows, err := ekc_db.Pool.Query(ctx, query, args...)
 	if err != nil {
@@ -119,11 +113,9 @@ func SelectOrders(ctx context.Context, filters models.OrderFilters) ([]Order, er
 	}
 	defer rows.Close()
 
-	// Načteme výsledky
 	var orders []Order
 	for rows.Next() {
 		var o Order
-		// Pořadí musí přesně odpovídat pořadí v SELECT
 		if err := rows.Scan(
 			&o.ID, &o.CreatedAt, &o.FirstName, &o.LastName, &o.Email, &o.DeliveryAddress,
 			&o.PaymentMethod, &o.DeliveryMethod, &o.TotalPrice, &o.ItemCount, &o.Status,
@@ -134,8 +126,8 @@ func SelectOrders(ctx context.Context, filters models.OrderFilters) ([]Order, er
 	}
 
 	if len(orders) == 0 {
-		// ...vrátíme náš nový, specifický error.
 		return nil, apperrors.ErrOrdersNotFound
 	}
+
 	return orders, nil
 }
