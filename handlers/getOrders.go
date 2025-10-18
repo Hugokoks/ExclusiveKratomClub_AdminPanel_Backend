@@ -21,6 +21,7 @@ func GetOrders(c *gin.Context) {
 	}
 
 	orders, err := db.SelectOrders(c.Request.Context(), filters)
+	log.Printf("!!! DATABASE ERROR: %v", err)
 
 	if err != nil {
 		if errors.Is(err, apperrors.ErrOrdersNotFound) {
@@ -32,7 +33,6 @@ func GetOrders(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to fetch orders from database"})
 		return
 	}
-	log.Printf("!!! DATABASE ERROR: %v", err)
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "ok",
