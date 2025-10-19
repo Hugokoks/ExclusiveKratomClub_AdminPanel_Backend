@@ -12,7 +12,7 @@ func OrdersRoute(g *gin.RouterGroup) {
 
 	o := g.Group("/orders")
 
-	o.GET("", ekc_mid.ValidateParamLength(limiter.BlogParamLimit, "query"), handlers.GetOrders)
+	o.GET("", ekc_mid.ValidateParamLength(limiter.OrderFilterLimit, "query"), handlers.GetOrders)
 	o.PATCH("/patch", handlers.PatchOrderStatus)
 
 }
