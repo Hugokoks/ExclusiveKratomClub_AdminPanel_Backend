@@ -26,7 +26,7 @@ func GetOrders(c *gin.Context) {
 	if err != nil {
 		if errors.Is(err, apperrors.ErrOrdersNotFound) {
 
-			c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "no orders found"})
+			c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "No orders found."})
 			return
 		}
 

@@ -54,6 +54,7 @@ func SelectOrders(ctx context.Context, filters models.OrderFilters) ([]Order, er
 		FROM orders o
 		WHERE 1=1
 	`
+
 	args := []interface{}{}
 	argId := 1
 
