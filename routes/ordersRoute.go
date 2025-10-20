@@ -3,6 +3,7 @@ package routes
 import (
 	"AdminPanelAPI/handlers"
 	"AdminPanelAPI/limiter"
+	"AdminPanelAPI/models"
 
 	ekc_mid "github.com/Hugokoks/kratomclub-go-common/middlewares"
 	"github.com/gin-gonic/gin"
