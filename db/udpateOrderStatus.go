@@ -10,7 +10,7 @@ import (
 
 func UpdateOrderStatus(ctx context.Context, orderID string, newStatus string) error {
 
-	query := `update orders set status = $1 WHERE number $2;`
+	query := `update orders set status = $1 WHERE number = $2;`
 
 	cmdTag, err := ekc_db.Pool.Exec(ctx, query, newStatus, orderID)
 	if err != nil {
