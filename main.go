@@ -96,7 +96,7 @@ func main() {
 	secured.Use(ekc_mid.AdminRoleMiddleware())
 	{
 		secured.GET("/verify-auth", func(c *gin.Context) {
-			c.JSON(http.StatusOK, gin.H{"valid": true, "message": "Token is valid", "status": "error"})
+			c.JSON(http.StatusOK, gin.H{"valid": true, "message": "Token is valid"})
 		})
 
 		routes.OrdersRoute(secured)

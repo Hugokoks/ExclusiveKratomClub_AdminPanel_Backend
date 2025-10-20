@@ -35,7 +35,6 @@ func GetOrders(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":  "ok",
 		"message": "orders retrive successfully",
 		"orders":  orders,
 		"valid":   true,
