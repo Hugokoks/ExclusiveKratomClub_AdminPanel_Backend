@@ -26,12 +26,9 @@ func GetOrders(c *gin.Context) {
 	if err != nil {
 		if errors.Is(err, apperrors.ErrOrdersNotFound) {
 
-			emptyOrders := []db.Order{}
 			c.JSON(http.StatusNotFound, gin.H{
-				"message": "No orders found with this filter.",
-				"orders":  emptyOrders,
+				"message": "No orders found for the given filters.",
 				"valid":   false,
-				"status":  "error",
 			})
 			return
 		}
