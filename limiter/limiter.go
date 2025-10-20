@@ -1,5 +1,10 @@
 package limiter
 
+const (
+	KiB = 1 << 10 // 1024
+	MiB = 1 << 20 // 1,048,576
+)
+
 var OrderFilterLimit = map[string]int{
 
 	"id":             40,
