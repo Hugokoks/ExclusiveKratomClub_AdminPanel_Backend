@@ -26,11 +26,11 @@ func GetOrders(c *gin.Context) {
 	if err != nil {
 		if errors.Is(err, apperrors.ErrOrdersNotFound) {
 
-			c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "No orders found."})
+			c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "No orders found.", "valid": false})
 			return
 		}
 
-		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to fetch orders from database"})
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to fetch orders from database", "valid": false})
 		return
 	}
 
@@ -38,5 +38,6 @@ func GetOrders(c *gin.Context) {
 		"status":  "ok",
 		"message": "orders retrive successfully",
 		"orders":  orders,
+		"valid":   true,
 	})
 }
