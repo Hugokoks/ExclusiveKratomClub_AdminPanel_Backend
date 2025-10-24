@@ -10,24 +10,10 @@ import (
 	ekc_db "github.com/Hugokoks/kratomclub-go-common/db"
 )
 
-// Struktura, která odpovídá tomu, co posíláme na frontend
-type Order struct {
-	ID              string  `json:"id"`
-	CreatedAt       string  `json:"createdAt"`
-	FirstName       string  `json:"firstName"`
-	LastName        string  `json:"lastName"`
-	Email           string  `json:"email"`
-	DeliveryAddress string  `json:"deliveryAddress"`
-	PaymentMethod   string  `json:"paymentMethod"`
-	DeliveryMethod  string  `json:"deliveryMethod"`
-	TotalPrice      float64 `json:"totalPrice"`
-	ItemCount       int     `json:"itemCount"`
-	Status          string  `json:"status"`
-}
 
-// Funkce pro bezpečné sestavení a spuštění dotazu
-func SelectOrders(ctx context.Context, filters models.OrderFilters) ([]Order, error) {
-	// Základní dotaz už je bez JOINu
+
+func SelectOrders(ctx context.Context, filters models.OrderFilters) ([]models.Order, error) {
+
 	query := `
 		SELECT 
 			o.number, 
@@ -126,9 +112,9 @@ func SelectOrders(ctx context.Context, filters models.OrderFilters) ([]Order, er
 	}
 	defer rows.Close()
 
-	var orders []Order
+	var orders []models.Order
 	for rows.Next() {
-		var o Order
+		var o models.Order
 		if err := rows.Scan(
 			&o.ID, &o.CreatedAt, &o.FirstName, &o.LastName, &o.Email, &o.DeliveryAddress,
 			&o.PaymentMethod, &o.DeliveryMethod, &o.TotalPrice, &o.ItemCount, &o.Status,
