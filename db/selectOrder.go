@@ -66,13 +66,13 @@ func SelectOrderDetail(ctx context.Context, orderID string)(*OrderDetail,error){
                 WHEN POSITION('-' IN o.delivery_method) > 0 THEN SPLIT_PART(o.delivery_method, '-', 2)
                 ELSE o.delivery_method
             END as delivery_method,
-			o.DiscountCzk,
-			o.ShippingCzk,
-			o.SubtotalCzk,
-			o.PaymentFeeCzk,
-			o.TotalCzk,
-			o.WeightGrams,
-			o.Note
+			o.discount_czk,
+			o.shipping_czk,
+			o.subtotal_czk,
+			o.payment_fee_czk,
+			o.total_czk,
+			o.weight_grams,
+			o.note
 		from orders o where o.number=$1
 	`
 	row := ekc_db.Pool.QueryRow(ctx, query, orderID) 
