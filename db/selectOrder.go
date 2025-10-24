@@ -49,7 +49,7 @@ func SelectOrderDetail(ctx context.Context, orderID string)(*OrderDetail,error){
 			o.id,
 			o.number,
 			o.status,
-			o.created_at,
+			TO_CHAR(o.created_at, 'YYYY-MM-DD HH24:MI:SS') as created_at, 
 			o.customer_first_name,
 			o.customer_last_name,
 			o.customer_email,
