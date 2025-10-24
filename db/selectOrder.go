@@ -12,33 +12,33 @@ import (
 
 
 type OrderDetail struct {
-	ID               int64
-	EkcID           string
-	Status           string
-	CreatedAt        string
-	CustomerFirstName string
-	CustomerLastName  string
-	CustomerEmail     string
-	CustomerPhone     string
-	DeliveryAddress  string
-	PaymentMethod    string
-	DeliveryMethod   string
-	DiscountCzk     float64
-	ShippingCzk     float64
-	SubtotalCzk     float64
-	PaymentFeeCzk   float64
-	TotalCzk       float64
-	WeightGrams    int
-	Note           string
-	Items		  []OrderItemDetail
+	ID               int64 `json:"id"`
+	EkcID           string	`json:"ekcId"`
+	Status           string	`json:"status"`
+	CreatedAt        string	`json:"createdAt"`
+	CustomerFirstName string	`json:"customerFirstName"`
+	CustomerLastName  string	`json:"customerLastName"`
+	CustomerEmail     string	`json:"customerEmail"`
+	CustomerPhone     string	`json:"customerPhone"`
+	DeliveryAddress  string	`json:"deliveryAddress"`
+	PaymentMethod    string	`json:"paymentMethod"`
+	DeliveryMethod   string	`json:"deliveryMethod"`
+	DiscountCzk     float64	`json:"discountCzk"`
+	ShippingCzk     float64	`json:"shippingCzk"`
+	SubtotalCzk     float64	`json:"subtotalCzk"`
+	PaymentFeeCzk   float64	`json:"paymentFeeCzk"`
+	TotalCzk       float64	`json:"totalCzk"`
+	WeightGrams    int	`json:"weightGrams"`
+	Note           string	`json:"note"`
+	Items		  []OrderItemDetail	`json:"items"`
 }
 type OrderItemDetail struct {
-	ProductName   string
-	VariantLabel string
-	ImageSrc     string
-	UnitPrice    float64
-	Quantity     int
-	TotalPrice   float64
+	ProductName   string	`json:"productName"`
+	VariantLabel string	`json:"variantLabel"`
+	ImageSrc     string	`json:"imageSrc"`
+	UnitPrice    float64	`json:"unitPrice"`
+	Quantity     int	`json:"quantity"`
+	TotalPrice   float64	`json:"totalPrice"`
 }
 
 
