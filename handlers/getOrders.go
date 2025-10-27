@@ -39,7 +39,7 @@ func GetOrders(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "orders retrive successfully",
-		"orders":  orders,
+		"data":    orders,
 		"valid":   true,
 		"status":  "ok",
 	})
