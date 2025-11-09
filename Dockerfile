@@ -28,7 +28,7 @@ COPY . .
 RUN go mod download
 
 # Sestavení binárky
-RUN go build -o /exclusivekratomclub_adminpanel_backend .
+RUN go build -o exclusivekratomclub_adminpanel_backend .
 
 # 7. FINÁLNÍ FÁZE
 FROM alpine:latest
