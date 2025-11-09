@@ -34,6 +34,6 @@ RUN go build -o exclusivekratomclub_adminpanel_backend .
 FROM alpine:latest
 WORKDIR /app
 
-COPY --from=builder /exclusivekratomclub_adminpanel_backend /app/exclusivekratomclub_adminpanel_backend
+COPY --from=builder /app/exclusivekratomclub_adminpanel_backend /app/exclusivekratomclub_adminpanel_backend
 
 CMD ["/app/exclusivekratomclub_adminpanel_backend"]
